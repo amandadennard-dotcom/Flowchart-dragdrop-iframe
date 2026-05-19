@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowchart Click &amp; Place</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: 'Nunito', sans-serif;
+    background: #f0f4ff;
+    color: #1e1b4b;
+  }
+  .wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 18px 16px 14px;
+    height: 100%;
+  }
+  .arr {
+    width: 2px; height: 24px;
+    background: #94a3b8;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .arr::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 50%;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- TITLE -->
+  <div style="text-align:center; width:100%;">
+    <div style="font-size:1.3rem; font-weight:900; color:#6c63ff; letter-spacing:-0.5px; line-height:1.2;">Flowchart → Code</div>
+    <div style="font-size:0.8rem; color:#6b7280; font-weight:700; margin-top:2px;">Unit 3 · Decision Making in Programs</div>
+  </div>
+
+  <!-- INSTRUCTION -->
+  <div style="background:#e0e7ff; border-left:4px solid #6c63ff; border-radius:8px; padding:9px 14px; font-size:0.82rem; font-weight:700; color:#1e1b4b; width:100%;">
+    👆 <span style="color:#6c63ff;">Click</span> a code chip to select it, then <span style="color:#6c63ff;">click a drop zone</span> to place it.
+  </div>
+
+  <!-- CODE BANK -->
+  <div style="background:#1e1b4b; border-radius:12px; padding:12px 16px; width:100%; box-shadow:0 4px 20px rgba(108,99,255,0.12);">
+    <div style="font-size:0.65rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#94a3b8; margin-bottom:10px;">Code Bank — click to select</div>
+    <div style="display:flex; flex-wrap:wrap; gap:8px;" id="codeBank">
+      <div onclick="selectChip(this)" data-id="start"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#1e3a5f; color:#7dd3fc; border:2px solid #0ea5e9; transition:transform 0.1s;">//&nbsp;Start&nbsp;game</div>
+      <div onclick="selectChip(this)" data-id="condition"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#312e81; color:#c084fc; border:2px solid #4f46e5; transition:transform 0.1s;">if&nbsp;(score&nbsp;&gt;&nbsp;100)</div>
+      <div onclick="selectChip(this)" data-id="win"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#14532d; color:#86efac; border:2px solid #16a34a; transition:transform 0.1s;">message&nbsp;=&nbsp;"You&nbsp;win!"</div>
+      <div onclick="selectChip(this)" data-id="keep"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#7c2d12; color:#fdba74; border:2px solid #ea580c; transition:transform 0.1s;">message&nbsp;=&nbsp;"Keep&nbsp;trying!"</div>
+      <div onclick="selectChip(this)" data-id="else"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#312e81; color:#c084fc; border:2px solid #4f46e5; transition:transform 0.1s;">}&nbsp;else&nbsp;{</div>
+      <div onclick="selectChip(this)" data-id="end"
+           style="font-family:'Fira Code',monospace; font-size:0.8rem; font-weight:600; padding:6px 14px; border-radius:7px; cursor:pointer; user-select:none; background:#1e293b; color:#cbd5e1; border:2px solid #475569; transition:transform 0.1s;">//&nbsp;End</div>
+    </div>
+  </div>
+
+  <!-- FLOWCHART -->
+  <div style="display:flex; flex-direction:column; align-items:center; width:100%; flex:1; min-height:0;">
+
+    <!-- Playing Game oval -->
+    <div style="background:#e0e7ff; border:3px solid #6c63ff; border-radius:999px; padding:10px 32px; font-weight:900; font-size:0.9rem; color:#6c63ff; text-align:center;">Playing Game</div>
+    <div class="arr"></div>
+
+    <!-- DROP: start -->
+    <div id="dz-start" data-answer="start" onclick="placeInZone('dz-start')"
+         style="background:#fff; border:2.5px dashed #6c63ff; border-radius:10px; min-width:150px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.78rem; font-weight:600; color:#a5b4fc; padding:6px 12px; position:relative; cursor:pointer;">
+      <span id="ph-start">drop zone</span>
+      <span id="rm-start" onclick="event.stopPropagation(); removeChip('dz-start')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+    </div>
+    <div class="arr"></div>
+
+    <!-- Diamond -->
+    <div style="position:relative; width:180px; height:88px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <div style="width:110px; height:68px; background:#ede9fe; border:3px solid #6c63ff; transform:rotate(45deg); position:absolute;"></div>
+      <div style="position:relative; z-index:2; font-weight:900; font-size:0.82rem; color:#6c63ff; text-align:center; line-height:1.2; pointer-events:none;">Is score<br>&gt; 100?</div>
+    </div>
+
+    <!-- DROP: condition -->
+    <div id="dz-condition" data-answer="condition" onclick="placeInZone('dz-condition')"
+         style="background:#fff; border:2.5px dashed #6c63ff; border-radius:10px; min-width:160px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.78rem; font-weight:600; color:#a5b4fc; padding:6px 12px; position:relative; margin-top:6px; cursor:pointer;">
+      <span id="ph-condition">drop zone</span>
+      <span id="rm-condition" onclick="event.stopPropagation(); removeChip('dz-condition')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+    </div>
+
+    <!-- Horizontal branch line -->
+    <div style="position:relative; width:320px; height:12px; flex-shrink:0; margin-top:8px;">
+      <div style="position:absolute; top:0; left:calc(50% - 100px); width:200px; height:2px; background:#94a3b8;"></div>
+    </div>
+
+    <!-- BRANCHES -->
+    <div style="display:flex; justify-content:center; width:100%; gap:16px;">
+
+      <!-- YES -->
+      <div style="display:flex; flex-direction:column; align-items:center; width:155px;">
+        <div style="font-size:0.72rem; font-weight:800; color:#6b7280; margin-bottom:4px;">Yes</div>
+        <div class="arr"></div>
+        <div id="dz-win" data-answer="win" onclick="placeInZone('dz-win')"
+             style="background:#f0fdf4; border:2.5px dashed #6c63ff; border-radius:10px; min-width:130px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.75rem; font-weight:600; color:#a5b4fc; padding:6px 10px; position:relative; text-align:center; cursor:pointer;">
+          <span id="ph-win">drop zone</span>
+          <span id="rm-win" onclick="event.stopPropagation(); removeChip('dz-win')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+        </div>
+        <div class="arr"></div>
+        <div style="background:#dcfce7; border:3px solid #16a34a; border-radius:10px; padding:10px 14px; text-align:center; font-weight:900; font-size:0.88rem; color:#166534; width:100%;">🏆 You Win!</div>
+      </div>
+
+      <!-- NO -->
+      <div style="display:flex; flex-direction:column; align-items:center; width:155px;">
+        <div style="font-size:0.72rem; font-weight:800; color:#6b7280; margin-bottom:4px;">No</div>
+        <div class="arr"></div>
+        <div id="dz-else" data-answer="else" onclick="placeInZone('dz-else')"
+             style="background:#fff7ed; border:2.5px dashed #6c63ff; border-radius:10px; min-width:130px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.75rem; font-weight:600; color:#a5b4fc; padding:6px 10px; position:relative; text-align:center; cursor:pointer;">
+          <span id="ph-else">drop zone</span>
+          <span id="rm-else" onclick="event.stopPropagation(); removeChip('dz-else')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+        </div>
+        <div class="arr"></div>
+        <div id="dz-keep" data-answer="keep" onclick="placeInZone('dz-keep')"
+             style="background:#fff7ed; border:2.5px dashed #6c63ff; border-radius:10px; min-width:130px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.75rem; font-weight:600; color:#a5b4fc; padding:6px 10px; position:relative; text-align:center; cursor:pointer;">
+          <span id="ph-keep">drop zone</span>
+          <span id="rm-keep" onclick="event.stopPropagation(); removeChip('dz-keep')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+        </div>
+        <div class="arr"></div>
+        <div style="background:#fff7ed; border:3px solid #f97316; border-radius:10px; padding:10px 14px; text-align:center; font-weight:900; font-size:0.88rem; color:#9a3412; width:100%;">🔁 Keep Trying</div>
+      </div>
+
+    </div><!-- /branches -->
+
+    <!-- END drop zone -->
+    <div style="display:flex; flex-direction:column; align-items:center; margin-top:8px;">
+      <div class="arr"></div>
+      <div id="dz-end" data-answer="end" onclick="placeInZone('dz-end')"
+           style="background:#fff; border:2.5px dashed #6c63ff; border-radius:10px; min-width:130px; min-height:40px; display:flex; align-items:center; justify-content:center; font-family:'Fira Code',monospace; font-size:0.78rem; font-weight:600; color:#a5b4fc; padding:6px 12px; position:relative; cursor:pointer;">
+        <span id="ph-end">drop zone</span>
+        <span id="rm-end" onclick="event.stopPropagation(); removeChip('dz-end')" style="display:none; position:absolute; top:-8px; right:-8px; width:18px; height:18px; background:#ff6b6b; color:#fff; border-radius:50%; font-size:11px; align-items:center; justify-content:center; cursor:pointer; font-weight:900; font-family:sans-serif; line-height:1;">✕</span>
+      </div>
+    </div>
+
+  </div><!-- /flowchart -->
+
+  <!-- PROGRESS + BUTTONS + FEEDBACK -->
+  <div style="width:100%; display:flex; flex-direction:column; gap:8px; align-items:center;">
+
+    <div style="display:flex; align-items:center; gap:10px; font-size:0.78rem; font-weight:800; color:#6b7280;">
+      Progress:
+      <div style="display:flex; gap:5px;">
+        <div id="dot-start"     style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+        <div id="dot-condition" style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+        <div id="dot-win"       style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+        <div id="dot-else"      style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+        <div id="dot-keep"      style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+        <div id="dot-end"       style="width:11px; height:11px; border-radius:50%; background:#c9d4f0;"></div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="checkAnswers()" style="background:#6c63ff; color:#fff; border:none; border-radius:10px; padding:10px 28px; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:900; cursor:pointer; box-shadow:0 4px 14px rgba(108,99,255,0.35);">Check Answers ✓</button>
+      <button onclick="resetAll()"     style="background:transparent; color:#6b7280; border:2px solid #c9d4f0; border-radius:10px; padding:10px 20px; font-family:'Nunito',sans-serif; font-size:0.85rem; font-weight:800; cursor:pointer;">Reset ↺</button>
+    </div>
+
+    <div id="feedback" style="display:none; text-align:center; font-size:0.88rem; font-weight:800; padding:10px 20px; border-radius:10px; width:100%;"></div>
+
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+  const ZONES = ['dz-start','dz-condition','dz-win','dz-else','dz-keep','dz-end'];
+
+  const CHIP_COLORS = {
+    start:'#7dd3fc', condition:'#c084fc', win:'#86efac',
+    keep:'#fdba74',  else:'#c084fc',      end:'#cbd5e1'
+  };
+
+  const DEFAULT_BG = {
+    'dz-start':'#fff','dz-condition':'#fff','dz-win':'#f0fdf4',
+    'dz-else':'#fff7ed','dz-keep':'#fff7ed','dz-end':'#fff'
+  };
+
+  let selectedChip = null; // currently selected chip element
+
+  /* ── SELECT A CHIP ── */
+  function selectChip(el) {
+    // If already used, do nothing
+    if (el.style.pointerEvents === 'none') return;
+
+    // Deselect if clicking the same chip
+    if (selectedChip === el) {
+      deselectChip();
+      return;
+    }
+
+    // Deselect any previously selected
+    deselectChip();
+
+    selectedChip = el;
+    // Highlight selected chip with a bright ring
+    el.style.outline = '3px solid #fff';
+    el.style.outlineOffset = '2px';
+    el.style.transform = 'scale(1.08)';
+
+    // Pulse all empty drop zones to guide the user
+    ZONES.forEach(id => {
+      const zone = document.getElementById(id);
+      if (!zone.dataset.filled) {
+        zone.style.borderStyle = 'solid';
+        zone.style.borderColor = '#a78bfa';
+        zone.style.background = '#f5f3ff';
+      }
+    });
+  }
+
+  function deselectChip() {
+    if (!selectedChip) return;
+    selectedChip.style.outline = '';
+    selectedChip.style.outlineOffset = '';
+    selectedChip.style.transform = '';
+    selectedChip = null;
+
+    // Reset zone highlights
+    ZONES.forEach(id => {
+      const zone = document.getElementById(id);
+      if (!zone.dataset.filled) {
+        zone.style.borderStyle = 'dashed';
+        zone.style.borderColor = '#6c63ff';
+        zone.style.background = DEFAULT_BG[id] || '#fff';
+      }
+    });
+  }
+
+  /* ── PLACE CHIP IN ZONE ── */
+  function placeInZone(zoneId) {
+    const zone = document.getElementById(zoneId);
+
+    // If no chip selected, clicking a filled zone removes it
+    if (!selectedChip) {
+      if (zone.dataset.filled) removeChip(zoneId);
+      return;
+    }
+
+    // If zone already filled, return that chip first
+    if (zone.dataset.filled) returnToBank(zone.dataset.filled, zone);
+
+    const chipId = selectedChip.dataset.id;
+
+    // Disable chip in bank
+    selectedChip.style.opacity = '0.3';
+    selectedChip.style.pointerEvents = 'none';
+    selectedChip.style.outline = '';
+    selectedChip.style.outlineOffset = '';
+    selectedChip.style.transform = '';
+
+    // Fill zone
+    zone.dataset.filled = chipId;
+    zone.style.borderStyle = 'solid';
+    zone.style.borderColor = '#6c63ff';
+    zone.style.background = DEFAULT_BG[zoneId] || '#fff';
+
+    const ph = document.getElementById('ph-' + zone.dataset.answer);
+    if (ph) {
+      ph.textContent = selectedChip.textContent.trim();
+      ph.style.color = CHIP_COLORS[chipId] || '#a5b4fc';
+      ph.style.fontFamily = "'Fira Code',monospace";
+    }
+
+    const rm = document.getElementById('rm-' + zone.dataset.answer);
+    if (rm) rm.style.display = 'flex';
+
+    selectedChip = null;
+
+    // Reset all zone highlights
+    ZONES.forEach(id => {
+      const z = document.getElementById(id);
+      if (!z.dataset.filled) {
+        z.style.borderStyle = 'dashed';
+        z.style.borderColor = '#6c63ff';
+        z.style.background = DEFAULT_BG[id] || '#fff';
+      }
+    });
+
+    updateDots();
+  }
+
+  /* ── RETURN CHIP TO BANK ── */
+  function returnToBank(chipId, zone) {
+    const chip = document.querySelector(`#codeBank [data-id="${chipId}"]`);
+    if (chip) { chip.style.opacity = '1'; chip.style.pointerEvents = ''; }
+
+    zone.dataset.filled = '';
+    zone.style.borderStyle = 'dashed';
+    zone.style.borderColor = '#6c63ff';
+    zone.style.background = DEFAULT_BG[zone.id] || '#fff';
+
+    const ph = document.getElementById('ph-' + zone.dataset.answer);
+    if (ph) { ph.textContent = 'drop zone'; ph.style.color = '#a5b4fc'; ph.style.fontFamily = ''; }
+
+    const rm = document.getElementById('rm-' + zone.dataset.answer);
+    if (rm) rm.style.display = 'none';
+  }
+
+  function removeChip(zoneId) {
+    const zone = document.getElementById(zoneId);
+    if (!zone || !zone.dataset.filled) return;
+    returnToBank(zone.dataset.filled, zone);
+    updateDots();
+  }
+
+  /* ── DOTS ── */
+  function updateDots() {
+    ZONES.forEach(id => {
+      const zone = document.getElementById(id);
+      const dot  = document.getElementById('dot-' + zone.dataset.answer);
+      if (!dot || dot.dataset.state === 'correct' || dot.dataset.state === 'incorrect') return;
+      dot.style.background = zone.dataset.filled ? '#a5b4fc' : '#c9d4f0';
+    });
+  }
+
+  /* ── CHECK ── */
+  function checkAnswers() {
+    // Deselect any chip first
+    deselectChip();
+
+    let correct = 0;
+    ZONES.forEach(id => {
+      const zone   = document.getElementById(id);
+      const answer = zone.dataset.answer;
+      const filled = zone.dataset.filled;
+      const dot    = document.getElementById('dot-' + answer);
+      if (!filled) return;
+
+      if (filled === answer) {
+        zone.style.background  = '#dcfce7';
+        zone.style.borderColor = '#22c55e';
+        zone.style.borderStyle = 'solid';
+        if (dot) { dot.style.background = '#22c55e'; dot.dataset.state = 'correct'; }
+        correct++;
+      } else {
+        zone.style.background  = '#fee2e2';
+        zone.style.borderColor = '#ff6b6b';
+        zone.style.borderStyle = 'solid';
+        if (dot) { dot.style.background = '#ff6b6b'; dot.dataset.state = 'incorrect'; }
+        const snap = filled;
+        setTimeout(() => {
+          returnToBank(snap, zone);
+          if (dot) { dot.style.background = '#c9d4f0'; dot.dataset.state = ''; }
+          updateDots();
+        }, 800);
+      }
+    });
+
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'block';
+    if (correct === ZONES.length) {
+      Object.assign(fb.style, { background:'#dcfce7', color:'#166534', border:'2px solid #16a34a' });
+      fb.textContent = '🎉 Perfect! All ' + ZONES.length + ' code blocks are correct. Great work!';
+    } else {
+      Object.assign(fb.style, { background:'#fef9c3', color:'#854d0e', border:'2px solid #fbbf24' });
+      fb.textContent = correct + ' out of ' + ZONES.length + ' correct. Wrong answers returned — try again!';
+    }
+  }
+
+  /* ── RESET ── */
+  function resetAll() {
+    deselectChip();
+    ZONES.forEach(id => {
+      const zone = document.getElementById(id);
+      if (zone.dataset.filled) returnToBank(zone.dataset.filled, zone);
+    });
+    document.querySelectorAll('[id^="dot-"]').forEach(d => { d.style.background = '#c9d4f0'; d.dataset.state = ''; });
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'none'; fb.textContent = '';
+  }
+
+  /* ── CLICK OUTSIDE TO DESELECT ── */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#codeBank') && !e.target.closest('[id^="dz-"]')) {
+      deselectChip();
+    }
+  });
+</script>
+</body>
+</html>
